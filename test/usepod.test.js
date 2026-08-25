@@ -4,14 +4,22 @@ const test = (await import('node:test')).default;
 const assert = (await import('node:assert/strict')).default;
 const { decodeRequired, encodeSignature } = await import('../src/usepod.js');
 
-test('decodes a payment-required header with either naming style', () => {
-  const a = decodeRequired(Buffer.from(JSON.stringify({ quote_id: 'q1', pay_to: 'ADDR', amount: '12345', asset: 'USDC', network: 'solana' })).toString('base64'));
+test('decodes an x402 v2 accepts list and picks solana usdc', () => {
+  const q = { x402_version: 2, quote_id: 'q1', accepts: [
+    { scheme: 'exact', network: 'solana:5eykt4UsFv8P8NJdTREpY1vzqKqZKvdp', pay_to: 'SOLADDR', asset: 'USDC', amount_microunits: 6, mode: 'cap-with-surplus-credit', body_hash: 'h', balance_hint: 'x' },
+    { scheme: 'exact', network: 'solana:5eykt4UsFv8P8NJdTREpY1vzqKqZKvdp', pay_to: 'SOLADDR', asset: 'SOL', amount_microunits: 60 },
+    { scheme: 'exact', network: 'eip155:8453', payTo: '0xEVM', asset: '0x833', maxAmountRequired: '6' },
+  ] };
+  const a = decodeRequired(Buffer.from(JSON.stringify(q)).toString('base64'));
   assert.equal(a.quoteId, 'q1');
-  assert.equal(a.payTo, 'ADDR');
-  assert.equal(a.amountU, 12345);
-  const b = decodeRequired(Buffer.from(JSON.stringify({ quoteId: 'q2', payTo: 'ADDR', maxAmountRequired: '0.0123', asset: 'EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v' })).toString('base64'));
-  assert.equal(b.amountU, 12300);
-  assert.equal(b.network, 'solana');
+  assert.equal(a.payTo, 'SOLADDR');
+  assert.equal(a.amountU, 6);
+  assert.equal(a.asset, 'USDC');
+  assert.match(a.network, /^solana:/);
+  assert.equal(a.balanceScheme, true);
+  assert.equal(a.bodyHash, 'h');
+  const legacy = decodeRequired(Buffer.from(JSON.stringify({ quote_id: 'q2', pay_to: 'ADDR', amount: '12345', asset: 'USDC', network: 'solana' })).toString('base64'));
+  assert.equal(legacy.amountU, 12345);
 });
 
 test('signature header round-trips', () => {

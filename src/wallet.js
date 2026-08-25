@@ -2,6 +2,7 @@
 import { Connection, Keypair, PublicKey, Transaction, TransactionInstruction, VersionedTransaction } from '@solana/web3.js';
 import { TOKEN_PROGRAM_ID, TOKEN_2022_PROGRAM_ID, getAssociatedTokenAddressSync, createTransferInstruction, createAssociatedTokenAccountIdempotentInstruction } from '@solana/spl-token';
 import bs58 from 'bs58';
+import { createPrivateKey, sign as edSign } from 'node:crypto';
 import { cfg } from './config.js';
 import { log } from './log.js';
 
@@ -48,6 +49,14 @@ export function signTx(base64) {
     tx.partialSign(kp);
     return { sig: bs58.encode(tx.signature), signedBase64: tx.serialize({ requireAllSignatures: false }).toString('base64') };
   }
+}
+
+// Ed25519 message signature (base58) with the wallet key; used for x402 balance proofs.
+const PKCS8_ED25519_PREFIX = Buffer.from('302e020100300506032b657004220420', 'hex');
+export function signMessage(message) {
+  const seed = Buffer.from(getKeypair().secretKey.slice(0, 32));
+  const key = createPrivateKey({ key: Buffer.concat([PKCS8_ED25519_PREFIX, seed]), format: 'der', type: 'pkcs8' });
+  return bs58.encode(edSign(null, Buffer.from(message, 'utf8'), key));
 }
 
 export const sendRaw = (signedBase64) => connection.sendRawTransaction(Buffer.from(signedBase64, 'base64'), { maxRetries: 3 });

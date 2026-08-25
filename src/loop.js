@@ -8,7 +8,12 @@ import { authorize } from './gate.js';
 import { perform, recordDenied } from './act.js';
 import * as cc from './cc.js';
 import * as inventory from './inventory.js';
-import { hasKey, pubkey, getUSDCBalance, getSOLBalance } from './wallet.js';
+import * as fees from './fees.js';
+import * as usepod from './usepod.js';
+import { parseTitleLLM, writePost } from './llm.js';
+import { reconcile, buysBlocked } from './reconcile.js';
+import { hasKey, pubkey, getSOLBalance } from './wallet.js';
+import { pnl } from './ledger.js';
 import { log } from './log.js';
 
 const MIN = 60_000;
@@ -23,12 +28,14 @@ const upsertListing = db.prepare(`INSERT INTO listings_seen
 const newListings = db.prepare(`SELECT * FROM listings_seen WHERE status = 'new'
   ORDER BY CASE WHEN insured_u > 0 THEN price_u * 1.0 / insured_u ELSE 9 END ASC, seen_at DESC LIMIT 40`);
 const setStatus = db.prepare('UPDATE listings_seen SET status = ?, skip_reason = ?, score_json = ? WHERE nft_address = ?');
+const setIdentity = db.prepare('UPDATE listings_seen SET identity_json = ?, card_key = ? WHERE nft_address = ?');
 const bestScored = db.prepare(`SELECT * FROM listings_seen WHERE status = 'scored' AND seen_at > ?
   ORDER BY json_extract(score_json, '$.edgePct') DESC LIMIT 1`);
 const markGone = db.prepare("UPDATE listings_seen SET status = 'gone' WHERE seen_at < ? AND status IN ('new','scored','skipped')");
 
 let inFlight = false;
 let lastTickAt = null;
+let llmDownLogged = false;
 export const status = () => ({ lastTickAt, inFlight });
 
 function due(name, everyMs) {
@@ -48,15 +55,13 @@ async function step(name, fn) {
   }
 }
 
-export function wallet() {
-  return cfg.paper && !hasKey() ? 'paper' : pubkey();
-}
+export const wallet = () => (cfg.paper && !hasKey() ? 'paper' : pubkey());
 
 async function balances() {
   const cashU = balance('Cash');
-  if (cfg.paper) return { cashU, solLamports: cfg.solReserveLamports + cfg.minSolLamports, chainUsdcU: null };
-  const [chainUsdcU, solLamports] = await Promise.all([getUSDCBalance(), getSOLBalance()]);
-  return { cashU, solLamports, chainUsdcU };
+  if (cfg.paper) return { cashU, solLamports: cfg.solReserveLamports + cfg.minSolLamports };
+  const solLamports = await getSOLBalance();
+  return { cashU, solLamports };
 }
 
 function ingest(cards) {
@@ -91,10 +96,23 @@ async function scan() {
   }
   if (!due('latest', 2 * MIN)) return;
   const since = kvGet('latest_since') ?? new Date(Date.now() - 60 * MIN).toISOString();
-  const cards = await cc.latest(since);
-  const n = ingest(cards);
+  const n = ingest(await cc.latest(since));
   kvSet('latest_since', now());
   if (n) log('scan', 'info', `latest: ${n} new or changed`);
+}
+
+async function identityFor(row) {
+  const identity = JSON.parse(row.identity_json);
+  if (isComplete(identity) || !hasKey() || !cfg.usepodModel) return identity;
+  try {
+    const fixed = await parseTitleLLM(row.item_name, identity);
+    if (!fixed) return identity;
+    setIdentity.run(JSON.stringify(fixed), cardKey(fixed), row.nft_address);
+    return fixed;
+  } catch (e) {
+    if (!llmDownLogged) { llmDownLogged = true; log('llm', 'warn', `title fallback unavailable: ${e.message}`); }
+    return identity;
+  }
 }
 
 async function scoreNew() {
@@ -104,11 +122,12 @@ async function scoreNew() {
     openPositions: inventory.openPositions().length, spentTodayU: spentSince('buy', today() + 'T00:00:00.000Z'),
   };
   for (const row of newListings.all()) {
-    const identity = JSON.parse(row.identity_json);
     const skip = (reason) => setStatus.run('skipped', reason, null, row.nft_address);
-    if (identity.gradingCompany !== 'PSA') { skip('not PSA'); continue; }
-    if (!(identity.grade >= 8)) { skip('grade under 8'); continue; }
+    const rough = JSON.parse(row.identity_json);
+    if (rough.gradingCompany !== 'PSA') { skip('not PSA'); continue; }
+    if (!(rough.grade >= 8)) { skip('grade under 8'); continue; }
     if (row.price_u < cfg.minTicketU || row.price_u > cfg.maxTicketU) { skip('outside ticket band'); continue; }
+    const identity = await identityFor(row);
     if (!isComplete(identity)) { skip('unparsed title'); continue; }
     let comp;
     try {
@@ -131,6 +150,7 @@ async function scoreNew() {
 }
 
 async function buy() {
+  if (buysBlocked()) return;
   const row = bestScored.get(new Date(Date.now() - 30 * MIN).toISOString());
   if (!row) return;
   const identity = JSON.parse(row.identity_json);
@@ -159,6 +179,7 @@ async function buy() {
       book('buy', [['Inventory', 'USDC', row.price_u], ['Cash', 'USDC', -row.price_u]], { ref: key, memo: row.item_name });
       inventory.open({ nftAddress: row.nft_address, identity, costU: row.price_u, actionId: action.id, compU: s.compU });
       setStatus.run('bought', null, row.score_json, row.nft_address);
+      kvSet('post_due', '1');
       log('buy', 'info', `bought ${row.item_name} for ${row.price_u}u (comp ${s.compU}u, edge ${(s.edgePct * 100).toFixed(1)}%)`, { key });
     },
   });
@@ -172,21 +193,44 @@ async function manageInventory() {
   if (cfg.paper) inventory.paperSales();
 }
 
+async function post() {
+  if (!hasKey() || !cfg.usepodModel) return;
+  const forced = kvGet('post_due') === '1';
+  if (!forced && !due('post', 6 * 60 * MIN)) return;
+  kvSet('post_due', '0');
+  const p = pnl();
+  const positions = inventory.openPositions();
+  await writePost({
+    mode: cfg.paper ? 'paper' : 'live', cashUsdc: p.cashU / 1e6, inventoryAtCostUsdc: p.inventoryU / 1e6, openPositions: positions.length,
+    salesUsdc: p.revenueSalesU / 1e6, netUsdc: p.netU / 1e6, computeUsdc: p.expenses.compute / 1e6,
+    latest: db.prepare("SELECT item_name, price_u, status FROM listings_seen WHERE status = 'bought' ORDER BY seen_at DESC LIMIT 3").all(),
+  });
+}
+
 export async function tick() {
   if (inFlight) return;
   inFlight = true;
   try {
+    if (!cfg.paper) {
+      await step('fees', fees.watchIncoming);
+      if (due('swap', 15 * MIN)) await step('swap', fees.swapExcessSol);
+      if (due('reconcile', 30 * MIN)) await step('reconcile', reconcile);
+    }
     await step('scan', scan);
     await step('score', scoreNew);
     await step('buy', buy);
     await step('inventory', manageInventory);
+    await step('compute', () => usepod.bookkeeping());
+    if (due('ops', 60 * MIN)) await step('ops', fees.opsReimburse);
+    await step('post', post);
     lastTickAt = now();
   } finally {
     inFlight = false;
   }
 }
 
-export function start() {
+export async function start() {
+  if (!cfg.paper) await step('reconcile', reconcile);
   const run = async () => {
     await tick();
     setTimeout(run, cfg.tickMs);

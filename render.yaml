@@ -1,0 +1,43 @@
+services:
+  - type: web
+    name: slab
+    runtime: node
+    region: oregon
+    plan: starter
+    buildCommand: npm ci
+    startCommand: npm start
+    healthCheckPath: /health
+    autoDeploy: true
+    disk:
+      name: slab-data
+      mountPath: /var/data
+      sizeGB: 1
+    envVars:
+      - key: NODE_VERSION
+        value: "22"
+      - key: DB_PATH
+        value: /var/data/slab.db
+      - key: PORT
+        value: "10000"
+      - key: LIVE
+        value: ""
+      - key: ADMIN_TOKEN
+        generateValue: true
+      - key: SLAB_PRIVATE_KEY
+        sync: false
+      - key: OPS_WALLET
+        sync: false
+      - key: SOLANA_RPC_URL
+        sync: false
+      - key: PPT_KEY
+        sync: false
+      - key: USEPOD_MODEL
+        sync: false
+      - key: PAYOUT_SOURCES
+        sync: false
+      - key: CLAWPUMP_KEY
+        sync: false
+      - key: CLAWPUMP_AGENT_ID
+        sync: false
+      - key: TOKEN_MINT
+        sync: false

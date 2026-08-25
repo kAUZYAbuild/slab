@@ -254,9 +254,9 @@ tr.fresh { animation: rowin 0.8s ease; }
 
 /* subpages */
 .sky.small { padding: 18px 0 16px; }
-.sky.small .clouds .c1 { top: 10%; left: 58%; width: 120px; height: 34px; }
+.sky.small .clouds .c1 { top: 12%; left: 47%; width: 120px; height: 34px; }
 .sky.small .clouds .c1::before { width: 52px; height: 52px; left: 20px; top: -26px; } .sky.small .clouds .c1::after { width: 34px; height: 34px; left: 66px; top: -14px; }
-.sky.small .clouds .c3 { top: 30%; left: 84%; width: 150px; height: 36px; }
+.sky.small .clouds .c3 { display: none; }
 .sky.small .clouds .c3::before { width: 62px; height: 62px; left: 28px; top: -32px; } .sky.small .clouds .c3::after { width: 42px; height: 42px; left: 88px; top: -18px; }
 .bar { position: relative; display: flex; align-items: center; gap: 28px; flex-wrap: wrap; }
 .brand-sm { display: flex; align-items: center; gap: 10px; font-family: var(--display); font-weight: 800; font-size: 22px; letter-spacing: -0.02em; }

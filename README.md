@@ -19,6 +19,18 @@ Public site on `http://localhost:4877` (static files in `site/`, hero assets gen
 
 Paper mode runs the same loop against live listings without broadcasting anything. Run it for a few days before `LIVE=1`.
 
+## built on
+
+- Collector Crypt: the venue. PSA cards vaulted and traded as tokens in USDC. Buy, list, reprice, sell; 2% seller fee.
+- PokemonPriceTracker: eBay sold comps by PSA grade. Every buy is measured against this.
+- UsePod: inference paid per request in USDC over x402 from the agent wallet.
+- ClawPump / pump.fun: token launch and 65% of trading fees, paid hourly in SOL.
+- Jupiter: fee SOL to USDC above a gas reserve.
+- Helius / Solana: RPC and the chain the ledger reconciles against.
+- Render: hosting, reimbursed to the operator monthly on-chain.
+- Higgsfield: the site's landscape and intro clip.
+- Next, not wired: SP3ND for buying physical graded cards on eBay with USDC and shipping to the vault. traded.gg once it has an API.
+
 ## layout
 
 `src/loop.js` is the tick. `src/score.js` holds every buy and sell number. `src/ledger.js` and `src/gate.js` are the book and the spend gate. `src/act.js` is the one path for anything that touches the chain: sign, persist the signature, send, confirm, book. `src/reconcile.js` makes chain state win after a crash.

@@ -50,6 +50,7 @@
         <h4>Source</h4>
         <a href="https://github.com/kAUZYAbuild/slab" target="_blank" rel="noopener">GitHub</a>
         <a href="#rules">How it decides</a>
+        <a href="#tools">Built on</a>
         <a href="/ops">Operator view</a>
         <a href="/api/state">State JSON</a>
       </div>
@@ -133,6 +134,24 @@
       <p class="sub">what the loop is doing right now</p>
     </div>
     <pre class="logbox mono" id="logbox"></pre>
+  </section>
+
+  <section class="wrap block" id="tools">
+    <div class="block-head">
+      <h2>Built on</h2>
+      <p class="sub">the services the agent pays or calls, and what each one does for it</p>
+    </div>
+    <ul class="tools">
+      <li><a href="https://collectorcrypt.com" target="_blank" rel="noopener">Collector Crypt</a><span>the venue: PSA cards held in a vault and traded as tokens in USDC; slab buys, lists, reprices and sells here, and pays their 2% on each sale</span></li>
+      <li><a href="https://www.pokemonpricetracker.com" target="_blank" rel="noopener">PokemonPriceTracker</a><span>the comps: what the same card in the same grade sold for on eBay, the number every buy is measured against</span></li>
+      <li><a href="https://usepod.ai" target="_blank" rel="noopener">UsePod</a><span>the inference: every model call is paid per request in USDC over x402 from the agent's own wallet, no account, no card on file</span></li>
+      <li><a href="https://clawpump.tech" target="_blank" rel="noopener">ClawPump</a> / <a href="https://pump.fun" target="_blank" rel="noopener">pump.fun</a><span>the income: the token launch and 65% of its trading fees, paid to the agent hourly in SOL</span></li>
+      <li><a href="https://jup.ag" target="_blank" rel="noopener">Jupiter</a><span>the swap: fee SOL becomes USDC above a small gas reserve</span></li>
+      <li><a href="https://helius.dev" target="_blank" rel="noopener">Helius</a> / <a href="https://solana.com" target="_blank" rel="noopener">Solana</a><span>the rails: RPC, and the chain the ledger is reconciled against</span></li>
+      <li><a href="https://render.com" target="_blank" rel="noopener">Render</a><span>the box it runs on; the agent pays the operator back for it monthly, on-chain</span></li>
+      <li><a href="https://higgsfield.ai" target="_blank" rel="noopener">Higgsfield</a><span>the landscape above and its wireframe-to-print intro were generated here</span></li>
+      <li class="next"><a href="https://sp3nd.shop" target="_blank" rel="noopener">SP3ND</a><span>next, not wired yet: buying physical graded cards on eBay with USDC and shipping them straight to the vault, so the agent can source off-chain too. traded.gg is on the same list once it has an API</span></li>
+    </ul>
   </section>
 
   <section class="wrap block rules" id="rules">

@@ -203,6 +203,15 @@ tr.fresh { animation: rowin 0.8s ease; }
 .prose p { max-width: 72ch; font-size: 16.5px; line-height: 1.62; margin: 0 0 14px; }
 .prose p:first-child::first-letter { font-family: var(--display); font-weight: 800; font-size: 2.1em; line-height: 0.8; float: left; margin: 6px 8px 0 0; color: var(--orange); }
 
+/* built on */
+.tools { list-style: none; margin: 0; padding: 0; }
+.tools li { display: grid; grid-template-columns: 200px 1fr; gap: 18px; padding: 12px 0; border-bottom: 1px solid var(--line); font-size: 15px; align-items: baseline; }
+.tools li a { font-family: var(--display); font-weight: 700; border-bottom: 1.5px solid var(--faint, rgba(42,47,69,.3)); }
+.tools li a:hover { color: var(--orange); border-color: var(--orange); }
+.tools li span { color: var(--muted); }
+.tools li.next span::before { content: ""; display: inline-block; width: 8px; height: 8px; border: 1.5px solid var(--orange); border-radius: 50%; margin-right: 8px; vertical-align: 1px; }
+@media (max-width: 860px) { .tools li { grid-template-columns: 1fr; gap: 4px; } }
+
 /* fields footer */
 .fields { position: relative; background: var(--green); color: var(--cream); padding: 120px 0 36px; overflow: hidden; }
 .stripes { position: absolute; inset: 0; width: 100%; height: 100%; fill: none; stroke: var(--cream); stroke-width: 3.5; opacity: 0.55; }

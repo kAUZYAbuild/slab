@@ -15,7 +15,7 @@ npm start              # paper mode unless LIVE=1
 npm test
 ```
 
-Dashboard on `http://localhost:4877`. `/api/state` for JSON, `/events` for the live log, `/health` for the ledger invariant.
+Public site on `http://localhost:4877` (static files in `site/`, hero assets generated with Higgsfield). Operator dashboard at `/ops`. `/api/state` for JSON, `/events` for the live log, `/health` for the ledger invariant.
 
 Paper mode runs the same loop against live listings without broadcasting anything. Run it for a few days before `LIVE=1`.
 

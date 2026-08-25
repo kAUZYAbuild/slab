@@ -1,0 +1,161 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>slab</title>
+<meta name="description" content="A collector agent that buys graded cards with its own token fees and pays for its own compute. Live ledger.">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%23f2e7d0'/%3E%3Crect x='9' y='6' width='14' height='20' rx='2' fill='none' stroke='%232a2f45' stroke-width='2'/%3E%3Crect x='12' y='11' width='8' height='9' fill='%23e8623a'/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700;12..96,800&family=Familjen+Grotesk:ital,wght@0,400;0,500;0,600;1,400&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/style.css">
+</head>
+<body>
+<div class="grain" aria-hidden="true"></div>
+<div class="orbit" id="orbit" aria-hidden="true"><i></i><i></i><i></i></div>
+
+<header class="sky">
+  <div class="clouds" aria-hidden="true">
+    <span class="cloud c1"></span>
+    <span class="cloud c2"></span>
+    <span class="cloud c3"></span>
+  </div>
+  <div class="wrap top">
+    <div class="brand reveal">
+      <a class="mark" href="/" aria-label="slab">
+        <svg viewBox="0 0 32 32" width="40" height="40"><rect width="32" height="32" rx="7" fill="var(--cream)"/><rect x="9" y="6" width="14" height="20" rx="2" fill="none" stroke="var(--ink)" stroke-width="2"/><rect x="12" y="11" width="8" height="9" fill="var(--orange)"/></svg>
+      </a>
+      <div>
+        <div class="name">slab</div>
+        <p class="tagline">A collector agent. Its token's trading fees buy graded Pokemon cards that are listed below what they actually sell for, and it pays for its own inference from the same wallet. Everything below is the live book.</p>
+      </div>
+    </div>
+    <nav class="cols">
+      <div class="col reveal" style="--i:1">
+        <h4>Agent</h4>
+        <a href="#now">Holdings</a>
+        <a href="#decisions">Decisions</a>
+        <a href="#ledger">Ledger</a>
+        <a href="#log">Live log</a>
+      </div>
+      <div class="col reveal" style="--i:2">
+        <h4>Venue</h4>
+        <a href="https://collectorcrypt.com" target="_blank" rel="noopener">Collector Crypt</a>
+        <a href="#" id="link-wallet" target="_blank" rel="noopener">Wallet</a>
+        <a href="#" id="link-token" target="_blank" rel="noopener">Token</a>
+        <a href="https://usepod.ai" target="_blank" rel="noopener">Inference</a>
+      </div>
+      <div class="col reveal" style="--i:3">
+        <h4>Source</h4>
+        <a href="https://github.com/kAUZYAbuild/slab" target="_blank" rel="noopener">GitHub</a>
+        <a href="#rules">How it decides</a>
+        <a href="/ops">Operator view</a>
+        <a href="/api/state">State JSON</a>
+      </div>
+    </nav>
+  </div>
+
+  <div class="wrap headline reveal" style="--i:4">
+    <h1>A collector agent<br>that pays its own way.</h1>
+    <p class="live mono" id="liveline"><span class="dot"></span> connecting to the book</p>
+  </div>
+</header>
+
+<section class="hero" id="hero" aria-label="illustration">
+  <img class="hero-img" id="hero-img" src="/assets/hero.png" alt="" width="2688" height="1152" decoding="async">
+  <video class="hero-video" id="hero-video" muted playsinline preload="auto" poster="/assets/hero-wire.png">
+    <source src="/assets/hero.mp4" type="video/mp4">
+  </video>
+  <svg class="wire" id="wire" viewBox="0 0 2688 1152" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
+    <g class="wire-sky">
+      <path d="M40 470 C60 380 120 330 200 320 C230 240 320 190 430 200 C480 130 560 120 620 170 C700 160 760 210 760 280 C820 300 830 380 790 420 L520 470 Z"/>
+      <path d="M1000 420 C980 360 1040 330 1110 340 C1130 290 1220 280 1260 320 C1320 300 1380 330 1390 380 C1440 400 1430 450 1380 470 L1010 470 Z"/>
+      <path d="M1900 470 C1880 400 1960 350 2060 360 C2090 280 2200 250 2300 290 C2380 240 2500 260 2540 330 C2640 340 2688 400 2688 470 Z"/>
+      <path d="M760 330 L980 330 M930 360 L1200 360 M1560 400 L1760 400 M1890 340 L2040 340"/>
+      <ellipse cx="400" cy="330" rx="150" ry="130"/>
+      <path d="M400 460 L400 320 M400 400 L340 350 M400 380 L470 330 M400 420 L330 410 M400 430 L460 400"/>
+    </g>
+    <g class="wire-ground">
+      <path d="M0 480 C300 470 500 470 720 485 C1000 505 1300 500 1600 490 C1900 480 2300 470 2688 480"/>
+      <path d="M0 515 C300 500 600 495 900 515 C1200 535 1500 525 1800 510 C2100 495 2400 500 2688 515"/>
+      <path d="M0 570 C350 545 700 540 1050 570 C1400 600 1750 590 2100 560 C2400 540 2550 545 2688 560"/>
+      <path d="M0 650 C400 610 800 600 1200 640 C1600 680 2000 670 2400 630 L2688 620"/>
+      <path d="M0 760 C450 700 900 690 1350 740 C1800 790 2250 780 2688 720"/>
+      <path d="M0 900 C500 820 1000 810 1500 870 C2000 930 2400 920 2688 860"/>
+      <path d="M0 1060 C600 960 1200 950 1800 1010 C2200 1050 2500 1040 2688 1000"/>
+      <path d="M340 1152 L520 490 M780 1152 L830 490 M1220 1152 L1140 490 M1660 1152 L1450 490 M2100 1152 L1760 490 M2540 1152 L2070 490"/>
+    </g>
+  </svg>
+</section>
+
+<main class="ground">
+  <section class="wrap block" id="now">
+    <div class="block-head">
+      <h2>Holdings</h2>
+      <p class="sub" id="now-sub">cash, inventory at cost, and what each card is listed for</p>
+    </div>
+    <div class="figures" id="figures">
+      <p>cash <b class="mono" data-k="cash">–</b></p>
+      <p>inventory at cost <b class="mono" data-k="inventory">–</b></p>
+      <p>fees received <b class="mono" data-k="fees">–</b></p>
+      <p>compute paid <b class="mono" data-k="compute">–</b></p>
+      <p>net <b class="mono" data-k="net">–</b></p>
+    </div>
+    <table class="tbl" id="positions">
+      <thead><tr><th>card</th><th class="n">cost</th><th class="n">comp</th><th class="n">listed</th><th>state</th><th class="n">age</th></tr></thead>
+      <tbody><tr><td colspan="6" class="empty">no cards held yet</td></tr></tbody>
+    </table>
+  </section>
+
+  <section class="wrap block" id="decisions">
+    <div class="block-head">
+      <h2>Decisions</h2>
+      <p class="sub" id="decisions-sub">every listing it looked at, and why it passed</p>
+    </div>
+    <table class="tbl" id="decision-rows">
+      <thead><tr><th>listing</th><th class="n">price</th><th class="n">comp</th><th class="n">edge</th><th>call</th></tr></thead>
+      <tbody><tr><td colspan="5" class="empty">nothing scored yet</td></tr></tbody>
+    </table>
+  </section>
+
+  <section class="wrap block" id="ledger">
+    <div class="block-head">
+      <h2>Ledger</h2>
+      <p class="sub">double-entry, integer units, nothing edited after the fact</p>
+    </div>
+    <ol class="txns" id="txns"><li class="empty">no entries yet</li></ol>
+  </section>
+
+  <section class="wrap block" id="log">
+    <div class="block-head">
+      <h2>Live log</h2>
+      <p class="sub">what the loop is doing right now</p>
+    </div>
+    <pre class="logbox mono" id="logbox"></pre>
+  </section>
+
+  <section class="wrap block rules" id="rules">
+    <div class="block-head">
+      <h2>How it decides</h2>
+      <p class="sub">the numbers below are read from the running configuration</p>
+    </div>
+    <div class="prose" id="rules-text"></div>
+  </section>
+</main>
+
+<footer class="fields">
+  <svg class="stripes" viewBox="0 0 1400 260" preserveAspectRatio="none" aria-hidden="true">
+    <path d="M0 40 C300 10 600 20 800 45 C1000 70 1200 60 1400 30"/>
+    <path d="M0 110 C350 70 700 80 1050 120 C1200 135 1300 125 1400 100"/>
+    <path d="M0 190 C400 140 800 150 1400 200"/>
+  </svg>
+  <div class="wrap foot">
+    <span>© 2026 slab. An experiment; nothing here is advice.</span>
+    <span class="mono" id="foot-mode"></span>
+  </div>
+</footer>
+
+<script src="/app.js" defer></script>
+</body>
+</html>

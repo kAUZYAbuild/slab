@@ -43,7 +43,7 @@ p{margin:0 0 1rem}code{background:var(--code);padding:0 .35ch}
 footer{margin-top:8vh;text-align:center;color:var(--faint);font-size:12px}a{color:var(--accent);text-decoration:none;border-bottom:1px solid var(--faint)}
 `;
 
-function decides(c) {
+export function decides(c) {
   const h = c.haircut;
   return `Only PSA-graded Pokemon cards listed in USDC on Collector Crypt, grade 8 or better, priced between $${usd(c.minTicketU)} and $${usd(c.maxTicketU)}.
 For each one it looks up what the same card in the same grade actually sold for on eBay. If there are not enough recent sales it does nothing.
@@ -103,7 +103,7 @@ ${decisions ? `<table><tr><th>listing</th><th class="n">price</th><th class="n">
 ${decides(s.cfg).split('\n').map((l) => `<p>${esc(l)}</p>`).join('')}
 
 ${s.post ? `<h2>latest post</h2><p>${esc(s.post.text)}</p><p class="muted">${age(s.post.created_at)} ago</p>` : ''}
-<footer>slab · <a href="/api/state">state</a> · <a href="/health">health</a></footer>
+<footer><a href="/">site</a> · <a href="/api/state">state</a> · <a href="/health">health</a></footer>
 </main>
 <script>
 const el=document.getElementById('log');const lines=[];

@@ -6,7 +6,7 @@ import { today } from './db.js';
 import { balance, hasRef, spentSince } from './ledger.js';
 import { log } from './log.js';
 
-const HOSTS = new Set(['api.collectorcrypt.com', 'dev-api.collectorcrypt.com', 'api.usepod.ai', 'lite-api.jup.ag', 'solana']);
+const HOSTS = new Set(['api.collectorcrypt.com', 'dev-api.collectorcrypt.com', 'api.usepod.ai', 'lite-api.jup.ag', 'us-central1-sp3nddotshop-prod.cloudfunctions.net', 'solana']);
 
 export function authorize({ kind, amountU, ref, host }) {
   const deny = (gate, reason) => {

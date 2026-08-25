@@ -57,7 +57,7 @@ async function holdings() {
   const owned = new Set(await ownedNfts());
   const sales = salesSeen();
   for (const pos of inventory.openPositions()) {
-    if (owned.has(pos.nft_address)) continue;
+    if (pos.state === 'shipping' || owned.has(pos.nft_address)) continue;
     const sale = sales.find((s) => JSON.parse(s.nft_mints ?? '{}').out?.includes(pos.nft_address));
     if (sale) {
       if (!hasRef(`sale:${pos.nft_address}:${sale.sig}`)) inventory.bookSale(pos, Math.round(sale.usdc_u / (1 - cfg.ccFee)), sale.sig);

@@ -42,6 +42,7 @@
       <div class="col reveal" style="--i:2">
         <h4>Venue</h4>
         <a href="https://collectorcrypt.com" target="_blank" rel="noopener">Collector Crypt</a>
+        <a href="https://sp3nd.shop" target="_blank" rel="noopener">SP3ND</a>
         <a href="#" id="link-wallet" target="_blank" rel="noopener">Wallet</a>
         <a href="#" id="link-token" target="_blank" rel="noopener">Token</a>
         <a href="https://usepod.ai" target="_blank" rel="noopener">Inference</a>
@@ -138,19 +139,29 @@
 
   <section class="wrap block" id="tools">
     <div class="block-head">
-      <h2>Built on</h2>
-      <p class="sub">the services the agent pays or calls, and what each one does for it</p>
+      <h2>Built on SP3ND and Collector Crypt</h2>
+      <p class="sub">two rails: one for buying cards with stablecoins anywhere, one for holding and trading them on-chain</p>
     </div>
-    <ul class="tools">
-      <li><a href="https://collectorcrypt.com" target="_blank" rel="noopener">Collector Crypt</a><span>the venue: PSA cards held in a vault and traded as tokens in USDC; slab buys, lists, reprices and sells here, and pays their 2% on each sale</span></li>
-      <li><a href="https://www.pokemonpricetracker.com" target="_blank" rel="noopener">PokemonPriceTracker</a><span>the comps: what the same card in the same grade sold for on eBay, the number every buy is measured against</span></li>
-      <li><a href="https://usepod.ai" target="_blank" rel="noopener">UsePod</a><span>the inference: every model call is paid per request in USDC over x402 from the agent's own wallet, no account, no card on file</span></li>
-      <li><a href="https://clawpump.tech" target="_blank" rel="noopener">ClawPump</a> / <a href="https://pump.fun" target="_blank" rel="noopener">pump.fun</a><span>the income: the token launch and 65% of its trading fees, paid to the agent hourly in SOL</span></li>
-      <li><a href="https://jup.ag" target="_blank" rel="noopener">Jupiter</a><span>the swap: fee SOL becomes USDC above a small gas reserve</span></li>
-      <li><a href="https://helius.dev" target="_blank" rel="noopener">Helius</a> / <a href="https://solana.com" target="_blank" rel="noopener">Solana</a><span>the rails: RPC, and the chain the ledger is reconciled against</span></li>
-      <li><a href="https://render.com" target="_blank" rel="noopener">Render</a><span>the box it runs on; the agent pays the operator back for it monthly, on-chain</span></li>
-      <li><a href="https://higgsfield.ai" target="_blank" rel="noopener">Higgsfield</a><span>the landscape above and its wireframe-to-print intro were generated here</span></li>
-      <li class="next"><a href="https://sp3nd.shop" target="_blank" rel="noopener">SP3ND</a><span>next, not wired yet: buying physical graded cards on eBay with USDC and shipping them straight to the vault, so the agent can source off-chain too. traded.gg is on the same list once it has an API</span></li>
+    <div class="pillars">
+      <article>
+        <h3><a href="https://collectorcrypt.com" target="_blank" rel="noopener">Collector Crypt</a></h3>
+        <p>The venue. PSA-graded cards sit in a vault and trade as tokens in USDC on Solana. This is where slab buys, lists, reprices and sells, where it pays 2% on every sale, and where its holdings are reconciled against the chain every half hour.</p>
+        <p class="status">live in the loop</p>
+      </article>
+      <article>
+        <h3><a href="https://sp3nd.shop" target="_blank" rel="noopener">SP3ND</a></h3>
+        <p>The buying rail for the physical world. SP3ND lets an agent shop Amazon and eBay with USDC over x402: no card, no KYC, no country lock. slab uses it to buy graded cards off eBay when they are cheaper there than on the venue, shipped straight to the vault to be tokenised and listed.</p>
+        <p class="status">wired in <code>src/sp3nd.js</code>; first purchase runs once the wallet is funded</p>
+      </article>
+    </div>
+    <ul class="tools also">
+      <li><a href="https://www.pokemonpricetracker.com" target="_blank" rel="noopener">PokemonPriceTracker</a><span>eBay sold comps by PSA grade, the number every buy is measured against</span></li>
+      <li><a href="https://usepod.ai" target="_blank" rel="noopener">UsePod</a><span>inference paid per request in USDC over x402 from the agent's own wallet</span></li>
+      <li><a href="https://clawpump.tech" target="_blank" rel="noopener">ClawPump</a> / <a href="https://pump.fun" target="_blank" rel="noopener">pump.fun</a><span>the token launch and 65% of its trading fees, paid hourly in SOL</span></li>
+      <li><a href="https://jup.ag" target="_blank" rel="noopener">Jupiter</a><span>fee SOL becomes USDC above a small gas reserve</span></li>
+      <li><a href="https://helius.dev" target="_blank" rel="noopener">Helius</a> / <a href="https://solana.com" target="_blank" rel="noopener">Solana</a><span>RPC, and the chain the ledger is reconciled against</span></li>
+      <li><a href="https://render.com" target="_blank" rel="noopener">Render</a><span>the box it runs on; paid back to the operator monthly, on-chain</span></li>
+      <li><a href="https://higgsfield.ai" target="_blank" rel="noopener">Higgsfield</a><span>the landscape above and its wireframe-to-print intro</span></li>
     </ul>
   </section>
 

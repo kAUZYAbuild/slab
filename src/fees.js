@@ -40,6 +40,7 @@ export function classify(tx, me) {
   else if (usdcU > 0 && nftOut.length) kind = 'sale';
   else if (usdcU > 0 && usepodPayTo().has(feePayer)) kind = 'refund';
   else if (usdcU > 0) kind = 'usdc_in';
+  else if (usdcU < 0) kind = 'usdc_out';
   else if (lamports > 0 && payoutSources().has(feePayer)) kind = 'payout';
   else if (lamports > 0) kind = 'sol_in';
   return { kind, lamports, usdcU, nftOut, nftIn, from: feePayer, self };

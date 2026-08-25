@@ -19,17 +19,13 @@ Public site on `http://localhost:4877` (static files in `site/`, hero assets gen
 
 Paper mode runs the same loop against live listings without broadcasting anything. Run it for a few days before `LIVE=1`.
 
-## built on
+## built on SP3ND and Collector Crypt
 
-- Collector Crypt: the venue. PSA cards vaulted and traded as tokens in USDC. Buy, list, reprice, sell; 2% seller fee.
-- PokemonPriceTracker: eBay sold comps by PSA grade. Every buy is measured against this.
-- UsePod: inference paid per request in USDC over x402 from the agent wallet.
-- ClawPump / pump.fun: token launch and 65% of trading fees, paid hourly in SOL.
-- Jupiter: fee SOL to USDC above a gas reserve.
-- Helius / Solana: RPC and the chain the ledger reconciles against.
-- Render: hosting, reimbursed to the operator monthly on-chain.
-- Higgsfield: the site's landscape and intro clip.
-- Next, not wired: SP3ND for buying physical graded cards on eBay with USDC and shipping to the vault. traded.gg once it has an API.
+Collector Crypt is the venue: PSA cards vaulted and traded as tokens in USDC. Buy, list, reprice, sell; 2% seller fee; holdings reconciled against the chain. Live in the loop.
+
+SP3ND is the buying rail for the physical world: an agent shops Amazon and eBay with USDC over x402, no card, no KYC. slab uses it to buy graded cards off eBay when they are cheaper than the venue, shipped to the vault to be tokenised and listed. Client in `src/sp3nd.js`; the first purchase runs once the wallet is funded.
+
+Also: PokemonPriceTracker (eBay sold comps by grade), UsePod (inference paid per request over x402), ClawPump / pump.fun (token launch, 65% of trading fees hourly in SOL), Jupiter (fee SOL to USDC), Helius / Solana, Render (hosting, reimbursed on-chain monthly), Higgsfield (the site's art).
 
 ## layout
 

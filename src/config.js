@@ -26,6 +26,10 @@ export const cfg = Object.freeze({
   clawpumpKey: env.CLAWPUMP_KEY || '',
   clawpumpAgentId: env.CLAWPUMP_AGENT_ID || '',
   tokenMint: env.TOKEN_MINT || '',
+  sp3ndKey: env.SP3ND_API_KEY || '',
+  sp3ndSecret: env.SP3ND_API_SECRET || '',
+  sp3ndEmail: env.SP3ND_EMAIL || '',
+  sp3ndShipTo: env.SP3ND_SHIP_TO ? JSON.parse(env.SP3ND_SHIP_TO) : null,
 
   // buy side. USDC micros and lamports everywhere.
   minTicketU: num('MIN_TICKET_U', 20 * USDC),

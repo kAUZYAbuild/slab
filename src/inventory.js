@@ -18,7 +18,7 @@ const soldStmt = db.prepare("UPDATE positions SET state = 'sold', sold_u = ?, so
 const stuckStmt = db.prepare("UPDATE positions SET state = 'stuck', note = ? WHERE nft_address = ?");
 
 export const positions = (state) => byStateStmt.all(state);
-export const openPositions = () => [...positions('held'), ...positions('listed')];
+export const openPositions = () => [...positions('held'), ...positions('listed'), ...positions('shipping')];
 export const allPositions = () => db.prepare('SELECT * FROM positions ORDER BY id DESC').all();
 
 export function open({ nftAddress, identity, costU, actionId, compU, note = null }) {

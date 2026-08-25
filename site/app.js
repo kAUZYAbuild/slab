@@ -1,4 +1,5 @@
 const $ = (s) => document.querySelector(s);
+const API = document.querySelector('meta[name="slab-api"]')?.content ?? '';
 const usd = (u) => (u / 1e6).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
 const money = (u) => (u < 0 ? '-$' : '$') + usd(Math.abs(u));
 const age = (iso) => {
@@ -47,7 +48,7 @@ function figure(key, u, { signed = false } = {}) {
 
 async function refresh() {
   let s;
-  try { s = await fetch('/api/state', { cache: 'no-store' }).then((r) => r.json()); } catch { return; }
+  try { s = await fetch(API + '/api/state', { cache: 'no-store' }).then((r) => r.json()); } catch { return; }
   const p = s.pnl;
   figure('cash', p.cashU);
   figure('inventory', p.inventoryU);
@@ -71,7 +72,7 @@ refresh();
 setInterval(refresh, 30_000);
 
 function connect() {
-  const es = new EventSource('/events');
+  const es = new EventSource(API + '/events');
   es.onmessage = (ev) => {
     const e = JSON.parse(ev.data);
     $('#p-log').textContent = `${e.ts.slice(11, 19)} ${e.step}: ${e.msg}`.slice(0, 120);

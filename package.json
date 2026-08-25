@@ -9,7 +9,8 @@
   },
   "scripts": {
     "start": "node src/main.js",
-    "test": "node --test"
+    "test": "node --test",
+    "build:site": "node scripts/build-site.mjs"
   },
   "dependencies": {
     "@solana/spl-token": "^0.4.15",

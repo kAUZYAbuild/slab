@@ -1,4 +1,5 @@
 const $ = (s) => document.querySelector(s);
+const API = document.querySelector('meta[name="slab-api"]')?.content ?? '';
 const usd = (u) => (u / 1e6).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
 const money = (u) => (u < 0 ? '-$' : '$') + usd(Math.abs(u));
 const sol = (l) => (l / 1e9).toFixed(4);
@@ -18,7 +19,7 @@ const cardLine = (id, key) => {
 const solscan = (sig) => (sig ? `<a href="https://solscan.io/tx/${esc(sig)}" target="_blank" rel="noopener">${esc(sig.slice(0, 6))}…</a>` : '–');
 const kv = (el, pairs) => { el.innerHTML = pairs.map(([k, v]) => `<dt>${esc(k)}</dt><dd>${v}</dd>`).join(''); };
 
-async function state() { return fetch('/api/state', { cache: 'no-store' }).then((r) => r.json()); }
+async function state() { return fetch(API + '/api/state', { cache: 'no-store' }).then((r) => r.json()); }
 
 function header(s) {
   const p = s.pnl;
@@ -77,7 +78,7 @@ async function holdings() {
 
 /* decisions */
 async function decisions() {
-  const [s, d] = await Promise.all([state(), fetch('/api/decisions', { cache: 'no-store' }).then((r) => r.json())]);
+  const [s, d] = await Promise.all([state(), fetch(API + '/api/decisions', { cache: 'no-store' }).then((r) => r.json())]);
   header(s);
   const counts = Object.fromEntries(d.funnel.map((r) => [r.status, r.n]));
   const total = Object.values(counts).reduce((a, b) => a + b, 0);
@@ -108,7 +109,7 @@ async function decisions() {
 
 /* ledger */
 async function ledger() {
-  const [s, g] = await Promise.all([state(), fetch('/api/ledger', { cache: 'no-store' }).then((r) => r.json())]);
+  const [s, g] = await Promise.all([state(), fetch(API + '/api/ledger', { cache: 'no-store' }).then((r) => r.json())]);
   header(s);
   const p = g.pnl;
   const earnedU = p.swappedToUsdcU + p.revenueSalesU;
@@ -165,7 +166,7 @@ async function logPage() {
     if (!paused) box.scrollTop = box.scrollHeight;
   };
   const redraw = () => { box.innerHTML = ''; last = null; lastEl = null; const copy = all.splice(0); for (const e of copy) add(e); $('#l-count').textContent = `${box.childElementCount} lines`; };
-  const hist = await fetch('/api/log', { cache: 'no-store' }).then((r) => r.json());
+  const hist = await fetch(API + '/api/log', { cache: 'no-store' }).then((r) => r.json());
   for (const e of hist.entries) add(e);
   $('#l-count').textContent = `${box.childElementCount} lines`;
   $('#l-runs tbody').innerHTML = hist.runs.map((r) => `<tr><td>${esc(r.name)}</td><td>${age(r.last_at)} ago</td><td class="${r.last_ok ? 'up' : 'down'}">${r.last_ok ? 'ok' : 'error'}</td><td class="why">${esc(r.note ?? '')}</td></tr>`).join('');
@@ -176,13 +177,13 @@ async function logPage() {
   });
   $('#l-step').addEventListener('change', (e) => { step = e.target.value; redraw(); });
   const connect = () => {
-    const es = new EventSource('/events');
+    const es = new EventSource(API + '/events');
     let skip = hist.entries.length ? new Set(hist.entries.slice(-100).map((e) => e.ts + e.msg)) : new Set();
     es.onmessage = (ev) => { const e = JSON.parse(ev.data); if (skip.has(e.ts + e.msg)) return; skip = new Set(); add(e, true); $('#l-count').textContent = `${box.childElementCount} lines`; };
     es.onerror = () => { es.close(); setTimeout(connect, 5000); };
   };
   connect();
-  setInterval(async () => { const h = await fetch('/api/log', { cache: 'no-store' }).then((r) => r.json()).catch(() => null); if (h) $('#l-runs tbody').innerHTML = h.runs.map((r) => `<tr><td>${esc(r.name)}</td><td>${age(r.last_at)} ago</td><td class="${r.last_ok ? 'up' : 'down'}">${r.last_ok ? 'ok' : 'error'}</td><td class="why">${esc(r.note ?? '')}</td></tr>`).join(''); }, 30_000);
+  setInterval(async () => { const h = await fetch(API + '/api/log', { cache: 'no-store' }).then((r) => r.json()).catch(() => null); if (h) $('#l-runs tbody').innerHTML = h.runs.map((r) => `<tr><td>${esc(r.name)}</td><td>${age(r.last_at)} ago</td><td class="${r.last_ok ? 'up' : 'down'}">${r.last_ok ? 'ok' : 'error'}</td><td class="why">${esc(r.note ?? '')}</td></tr>`).join(''); }, 30_000);
 }
 
 const pages = { holdings, decisions, ledger, log: logPage };

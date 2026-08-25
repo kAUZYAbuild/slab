@@ -47,6 +47,8 @@ export const imbalance = () => Object.fromEntries(imbStmt.all().map((r) => [r.cu
 export const spentSince = (kind, sinceIso, currency = 'USDC') => spentStmt.get(kind, sinceIso, currency).spent;
 export const transactions = (limit = 50) => listStmt.all(limit).map((r) => ({ ...r, entries: JSON.parse(r.entries) }));
 
+export const trialBalance = () => byAccountStmt.all().map((r) => ({ account: r.account, currency: r.currency, balance: r.b }));
+
 export function pnl() {
   const rows = byAccountStmt.all();
   const get = (account, currency = 'USDC') => rows.find((r) => r.account === account && r.currency === currency)?.b ?? 0;
@@ -72,5 +74,7 @@ export function pnl() {
     expenses,
     netU: net,
     driftU: -get('Equity:Drift'),
+    operatorCapitalU: -get('Equity'),
+    operatorCapitalLamports: -get('Equity', 'SOL'),
   };
 }

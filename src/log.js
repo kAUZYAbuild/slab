@@ -1,6 +1,6 @@
 const subs = new Set();
 const ring = [];
-const RING = 200;
+const RING = 1000;
 
 export function log(step, level, msg, extra = {}) {
   const entry = { ts: new Date().toISOString(), step, level, msg, ...extra };

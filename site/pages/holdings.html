@@ -1,0 +1,24 @@
+<section class="wrap block in">
+  <div class="block-head"><h1>Holdings</h1><p class="sub" id="h-sub">loading</p></div>
+  <div class="figures" id="h-figures">
+    <p>cash <b class="mono" data-k="cash">–</b></p>
+    <p>inventory at cost <b class="mono" data-k="inventory">–</b></p>
+    <p>marked at comps <b class="mono" data-k="marked">–</b></p>
+    <p>unrealised <b class="mono" data-k="unrealised">–</b></p>
+    <p>realised <b class="mono" data-k="realised">–</b></p>
+    <p>sol for gas <b class="mono" data-k="sol">–</b></p>
+  </div>
+  <h2>Open positions <span class="count" id="h-open-n"></span></h2>
+  <p class="sub">cost is what it paid; comp is the latest eBay-sold price for that card and grade; floor is the lowest it will ever list at (cost plus 5% after the venue fee)</p>
+  <table class="tbl wide" id="h-open">
+    <thead><tr><th>card</th><th class="n">cost</th><th class="n">comp at buy</th><th class="n">comp now</th><th class="n">listed</th><th class="n">floor</th><th class="n">if sold now</th><th>state</th><th class="n">held</th><th class="n">repriced</th></tr></thead>
+    <tbody></tbody>
+  </table>
+  <h2>In transit <span class="count" id="h-ship-n"></span></h2>
+  <p class="sub">physical cards bought on eBay through SP3ND, on their way to the vault; they count against caps but cannot be listed until tokenised</p>
+  <table class="tbl" id="h-shipping"><thead><tr><th>card</th><th class="n">cost</th><th>order</th><th class="n">bought</th></tr></thead><tbody></tbody></table>
+  <h2>Sold <span class="count" id="h-sold-n"></span></h2>
+  <table class="tbl" id="h-sold"><thead><tr><th>card</th><th class="n">cost</th><th class="n">sold for</th><th class="n">net after fee</th><th class="n">profit</th><th class="n">days held</th><th>tx</th></tr></thead><tbody></tbody></table>
+  <h2>Wallet and limits</h2>
+  <dl class="kv" id="h-wallet"></dl>
+</section>

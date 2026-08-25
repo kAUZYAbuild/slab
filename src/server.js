@@ -4,7 +4,7 @@ import { createReadStream } from 'node:fs';
 import { extname, join, normalize } from 'node:path';
 import { cfg } from './config.js';
 import { db, runs, counterGet, kvGet, kvSet, now } from './db.js';
-import { pnl, imbalance, transactions } from './ledger.js';
+import { pnl, imbalance, transactions, trialBalance, spentSince } from './ledger.js';
 import { allPositions } from './inventory.js';
 import { recentActions } from './act.js';
 import { subscribe, recent, log } from './log.js';
@@ -13,6 +13,12 @@ import { render, decides } from './dashboard.js';
 
 const decisionsStmt = db.prepare(`SELECT nft_address, item_name, price_u, status, skip_reason, score_json, seen_at
   FROM listings_seen WHERE status IN ('scored','skipped','bought') ORDER BY seen_at DESC LIMIT 40`);
+const decisionsDeepStmt = db.prepare(`SELECT l.nft_address, l.item_name, l.card_key, l.price_u, l.insured_u, l.grade_num, l.status, l.skip_reason, l.score_json, l.seen_at, l.listed_at, l.identity_json,
+    c.price_u AS comp_u, c.confidence, c.n AS comp_n, c.latest_at AS comp_latest, c.spread_pct
+  FROM listings_seen l LEFT JOIN comps c ON c.card_key = l.card_key
+  WHERE l.status IN ('scored','skipped','bought') ORDER BY l.seen_at DESC LIMIT ?`);
+const reasonsStmt = db.prepare(`SELECT skip_reason AS reason, COUNT(*) AS n FROM listings_seen WHERE status = 'skipped' GROUP BY skip_reason ORDER BY n DESC LIMIT 14`);
+const PAGES = { '/holdings': 'holdings', '/decisions': 'decisions', '/ledger': 'ledger', '/log': 'log' };
 const countStmt = db.prepare('SELECT status, COUNT(*) AS n FROM listings_seen GROUP BY status');
 const compStmt = db.prepare('SELECT price_u, confidence FROM comps WHERE card_key = ?');
 const postStmt = db.prepare('SELECT text, created_at FROM posts ORDER BY id DESC LIMIT 1');
@@ -36,6 +42,7 @@ export function state() {
     tokenMint: cfg.tokenMint || null,
     loop: loopStatus(),
     pnl: pnl(),
+    spentTodayU: spentSince('buy', now().slice(0, 10) + 'T00:00:00.000Z'),
     imbalance: imbalance(),
     driftAck: kvGet('drift_ack'),
     driftFlag: kvGet('drift_flag'),
@@ -49,6 +56,29 @@ export function state() {
     post: postStmt.get() ?? null,
     cfg: rulesCfg,
   };
+}
+
+export function decisions(limit = 300) {
+  return {
+    funnel: countStmt.all(),
+    reasons: reasonsStmt.all(),
+    rows: decisionsDeepStmt.all(limit).map((d) => ({ ...d, score: d.score_json ? JSON.parse(d.score_json) : null, identity: d.identity_json ? JSON.parse(d.identity_json) : null, score_json: undefined, identity_json: undefined })),
+  };
+}
+
+export function ledger(limit = 300) {
+  return { pnl: pnl(), imbalance: imbalance(), balances: trialBalance(), txns: transactions(limit) };
+}
+
+async function page(name, res) {
+  try {
+    const [shell, body] = await Promise.all([readFile(join(SITE, 'shell.html'), 'utf8'), readFile(join(SITE, 'pages', name + '.html'), 'utf8')]);
+    const title = body.match(/<h1[^>]*>([^<]+)<\/h1>/)?.[1] ?? name;
+    res.writeHead(200, { 'Content-Type': 'text/html; charset=utf-8', 'Cache-Control': 'no-cache' });
+    res.end(shell.replaceAll('{{page}}', name).replaceAll('{{title}}', title).replace('{{content}}', body));
+  } catch (e) {
+    json(res, 500, { error: e.message });
+  }
 }
 
 const json = (res, code, body) => {
@@ -106,6 +136,10 @@ export function startServer() {
       return res.end(render(state()));
     }
     if (req.method === 'GET' && pathname === '/api/state') return json(res, 200, state());
+    if (req.method === 'GET' && pathname === '/api/decisions') return json(res, 200, decisions());
+    if (req.method === 'GET' && pathname === '/api/ledger') return json(res, 200, ledger());
+    if (req.method === 'GET' && pathname === '/api/log') return json(res, 200, { entries: recent(1000), runs: runs() });
+    if (req.method === 'GET' && PAGES[pathname]) return page(PAGES[pathname], res);
     if (req.method === 'GET' && pathname === '/events') return sse(req, res);
     if (req.method === 'GET' && pathname === '/health') {
       const imb = imbalance();

@@ -1,0 +1,13 @@
+<section class="wrap block in">
+  <div class="block-head"><h1>Live log</h1><p class="sub" id="l-sub">what the loop is doing, as it does it</p></div>
+  <h2>Steps</h2>
+  <table class="tbl" id="l-runs"><thead><tr><th>step</th><th>last run</th><th>result</th><th>note</th></tr></thead><tbody></tbody></table>
+  <h2>Stream</h2>
+  <div class="filters" id="l-filters">
+    <button data-level="all" class="on">all</button><button data-level="warn">warnings and errors</button>
+    <select id="l-step"><option value="">every step</option></select>
+    <button id="l-pause">pause</button>
+    <span class="muted" id="l-count"></span>
+  </div>
+  <pre class="logbox tall mono" id="logbox"></pre>
+</section>

@@ -34,10 +34,10 @@
     <nav class="cols">
       <div class="col reveal" style="--i:1">
         <h4>Agent</h4>
-        <a href="#now">Holdings</a>
-        <a href="#decisions">Decisions</a>
-        <a href="#ledger">Ledger</a>
-        <a href="#log">Live log</a>
+        <a href="/holdings">Holdings</a>
+        <a href="/decisions">Decisions</a>
+        <a href="/ledger">Ledger</a>
+        <a href="/log">Live log</a>
       </div>
       <div class="col reveal" style="--i:2">
         <h4>Venue</h4>
@@ -94,8 +94,8 @@
 <main class="ground">
   <section class="wrap block" id="now">
     <div class="block-head">
-      <h2>Holdings</h2>
-      <p class="sub" id="now-sub">cash, inventory at cost, and what each card is listed for</p>
+      <h2>Now</h2>
+      <p class="sub" id="now-sub">cash, inventory at cost, and what it has earned and spent</p>
     </div>
     <div class="figures" id="figures">
       <p>cash <b class="mono" data-k="cash">–</b></p>
@@ -104,37 +104,12 @@
       <p>compute paid <b class="mono" data-k="compute">–</b></p>
       <p>net <b class="mono" data-k="net">–</b></p>
     </div>
-    <table class="tbl" id="positions">
-      <thead><tr><th>card</th><th class="n">cost</th><th class="n">comp</th><th class="n">listed</th><th>state</th><th class="n">age</th></tr></thead>
-      <tbody><tr><td colspan="6" class="empty">no cards held yet</td></tr></tbody>
-    </table>
-  </section>
-
-  <section class="wrap block" id="decisions">
-    <div class="block-head">
-      <h2>Decisions</h2>
-      <p class="sub" id="decisions-sub">every listing it looked at, and why it passed</p>
-    </div>
-    <table class="tbl" id="decision-rows">
-      <thead><tr><th>listing</th><th class="n">price</th><th class="n">comp</th><th class="n">edge</th><th>call</th></tr></thead>
-      <tbody><tr><td colspan="5" class="empty">nothing scored yet</td></tr></tbody>
-    </table>
-  </section>
-
-  <section class="wrap block" id="ledger">
-    <div class="block-head">
-      <h2>Ledger</h2>
-      <p class="sub">double-entry, integer units, nothing edited after the fact</p>
-    </div>
-    <ol class="txns" id="txns"><li class="empty">no entries yet</li></ol>
-  </section>
-
-  <section class="wrap block" id="log">
-    <div class="block-head">
-      <h2>Live log</h2>
-      <p class="sub">what the loop is doing right now</p>
-    </div>
-    <pre class="logbox mono" id="logbox"></pre>
+    <nav class="pages">
+      <a href="/holdings"><b>Holdings</b><span id="p-holdings">every card it holds, what it paid, what it is listed for</span></a>
+      <a href="/decisions"><b>Decisions</b><span id="p-decisions">every listing it looked at and why it passed</span></a>
+      <a href="/ledger"><b>Ledger</b><span id="p-ledger">the double-entry book, trial balance, and who funded what</span></a>
+      <a href="/log"><b>Live log</b><span id="p-log">what the loop is doing right now</span></a>
+    </nav>
   </section>
 
   <section class="wrap block" id="tools">
@@ -186,6 +161,7 @@
   </div>
 </footer>
 
+<script src="/orbit.js" defer></script>
 <script src="/app.js" defer></script>
 </body>
 </html>

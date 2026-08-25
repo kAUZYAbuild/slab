@@ -1,0 +1,46 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>{{title}} · slab</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%23f2e7d0'/%3E%3Crect x='9' y='6' width='14' height='20' rx='2' fill='none' stroke='%232a2f45' stroke-width='2'/%3E%3Crect x='12' y='11' width='8' height='9' fill='%23e8623a'/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700;12..96,800&family=Familjen+Grotesk:ital,wght@0,400;0,500;0,600;1,400&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/style.css">
+</head>
+<body class="subpage" data-page="{{page}}">
+<div class="grain" aria-hidden="true"></div>
+<div class="orbit" id="orbit" aria-hidden="true"><i></i><i></i><i></i></div>
+<header class="sky small">
+  <div class="clouds" aria-hidden="true"><span class="cloud c1"></span><span class="cloud c3"></span></div>
+  <div class="wrap bar">
+    <a class="brand-sm" href="/" aria-label="slab home">
+      <svg viewBox="0 0 32 32" width="30" height="30"><rect width="32" height="32" rx="7" fill="var(--cream)"/><rect x="9" y="6" width="14" height="20" rx="2" fill="none" stroke="var(--ink)" stroke-width="2"/><rect x="12" y="11" width="8" height="9" fill="var(--orange)"/></svg>
+      <span>slab</span>
+    </a>
+    <nav class="pagenav">
+      <a href="/holdings" data-nav="holdings">Holdings</a>
+      <a href="/decisions" data-nav="decisions">Decisions</a>
+      <a href="/ledger" data-nav="ledger">Ledger</a>
+      <a href="/log" data-nav="log">Live log</a>
+      <a href="/#rules">How it decides</a>
+    </nav>
+    <p class="live mono" id="liveline"><span class="dot"></span> connecting</p>
+  </div>
+</header>
+<main class="ground">
+{{content}}
+</main>
+<footer class="fields small">
+  <svg class="stripes" viewBox="0 0 1400 260" preserveAspectRatio="none" aria-hidden="true">
+    <path d="M0 40 C300 10 600 20 800 45 C1000 70 1200 60 1400 30"/>
+    <path d="M0 110 C350 70 700 80 1050 120 C1200 135 1300 125 1400 100"/>
+  </svg>
+  <div class="wrap foot"><span>© 2026 slab. An experiment; nothing here is advice.</span><span class="mono" id="foot-mode"></span></div>
+</footer>
+<script src="/orbit.js" defer></script>
+<script src="/pages.js" defer></script>
+</body>
+</html>

@@ -1,0 +1,17 @@
+<section class="wrap block in">
+  <div class="block-head"><h1>Decisions</h1><p class="sub" id="d-sub">loading</p></div>
+  <h2>Funnel</h2>
+  <p class="sub">every listing in the price band is seen; most are dropped by a rule before a comp is even fetched; the few that survive are scored and the best one per tick is bought</p>
+  <div class="funnel" id="d-funnel"></div>
+  <h2>Why it passed</h2>
+  <ol class="reasons" id="d-reasons"></ol>
+  <h2>Every listing it scored</h2>
+  <div class="filters" id="d-filters">
+    <button data-f="all" class="on">all</button><button data-f="candidate">candidates</button><button data-f="bought">bought</button><button data-f="skipped">skipped</button>
+    <span class="muted" id="d-count"></span>
+  </div>
+  <table class="tbl wide" id="d-rows">
+    <thead><tr><th>when</th><th>listing</th><th class="n">price</th><th class="n">insured</th><th>comp</th><th class="n">haircut</th><th class="n">expected</th><th class="n">net</th><th class="n">edge</th><th class="n">floor</th><th>call</th></tr></thead>
+    <tbody></tbody>
+  </table>
+</section>

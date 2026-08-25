@@ -2,7 +2,7 @@
 // daily credit budget. Response shape is pinned by scripts/ppt-discover.mjs;
 // normalizePPT reads the documented fields defensively and reports what it saw.
 import { cfg, USDC } from './config.js';
-import { db, now, counterInc, counterGet } from './db.js';
+import { db, now, counterInc, counterGet, kvGet, kvSet } from './db.js';
 import { cardKey, fromCard } from './cards.js';
 import { confidence } from './score.js';
 import { log } from './log.js';
@@ -51,6 +51,14 @@ export function normalizePPT(json, identity) {
   return { priceU: market > 0 ? Math.round(market * USDC) : null, n, latestAt, spreadPct, nameOverlap: nameHit, matched: c.name };
 }
 
+// A dead comps API pauses scoring instead of being hit every tick.
+export const available = () => !(kvGet('ppt_backoff_until') && Date.parse(kvGet('ppt_backoff_until')) > Date.now());
+function backoff(status) {
+  const minutes = status === 401 || status === 403 ? 30 : 5;
+  kvSet('ppt_backoff_until', new Date(Date.now() + minutes * 60_000).toISOString());
+  return minutes;
+}
+
 export async function fetchPPT(identity) {
   const url = new URL(cfg.pptBase + '/cards');
   url.searchParams.set('search', `${identity.name} ${identity.number}`);
@@ -59,7 +67,10 @@ export async function fetchPPT(identity) {
   url.searchParams.set('limit', '10');
   const res = await fetch(url, { headers: { Authorization: `Bearer ${cfg.pptKey}`, 'User-Agent': cfg.userAgent } });
   const json = await res.json().catch(() => null);
-  if (!res.ok) throw new Error(`ppt ${res.status}: ${json?.error ?? json?.message ?? 'no body'}`);
+  if (!res.ok) {
+    const minutes = backoff(res.status);
+    throw new Error(`ppt ${res.status}: ${json?.error ?? json?.message ?? 'no body'}; scoring paused ${minutes} min`);
+  }
   return json;
 }
 

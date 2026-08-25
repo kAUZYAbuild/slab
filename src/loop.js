@@ -3,7 +3,7 @@ import { db, now, today, kvGet, kvSet, runMark } from './db.js';
 import { book, balance, spentSince } from './ledger.js';
 import { fromCard, cardKey, isComplete } from './cards.js';
 import { score } from './score.js';
-import { getComp, venueFloor } from './comps.js';
+import { getComp, venueFloor, available as compsAvailable } from './comps.js';
 import { authorize } from './gate.js';
 import { perform, recordDenied } from './act.js';
 import * as cc from './cc.js';
@@ -116,6 +116,10 @@ async function identityFor(row) {
 }
 
 async function scoreNew() {
+  if (!compsAvailable()) {
+    if (due('comps-paused', 30 * MIN)) log('score', 'warn', `comps paused until ${kvGet('ppt_backoff_until').slice(11, 16)} UTC after an API error`);
+    return;
+  }
   const b = await balances();
   const ctx = {
     bankrollU: b.cashU + balance('Inventory'), cashU: b.cashU, solLamports: b.solLamports,
